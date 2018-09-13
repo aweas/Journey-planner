@@ -11,6 +11,11 @@ class JourneyPlan {
     this.journeyElements.forEach((x) => duration += x.time);
     return new JourneyPlanCard(plan: this);
   }
+
+  void add(JourneyElement element) {
+    this.journeyElements.add(element);
+    this.duration += element.time;
+  }
 }
 
 class JourneyElement {
@@ -65,11 +70,12 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     newData.add(new ButtonTheme.bar(
       child: new ButtonBar(
         children: <Widget>[
+          new Text(widget.plan.duration.toString()),
           new FlatButton(
             child: const Text('Add new'),
             onPressed: () {
               setState(() {
-                widget.plan.journeyElements.add(
+                widget.plan.add(
                     new JourneyElement(icon: const Icon(Icons.directions_car),
                     name: "test",
                     comment: "test2",
