@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:journey_list/helpers/journey_classes.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -11,17 +11,23 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(title: 'Journey planner'),
+      home: new MyHomePage(
+        title: 'Journey planner',
+        planMembers: <Widget>[],
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.planMembers}) : super(key: key);
   final String title;
+  final List<Widget> planMembers;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() {
+    return _MyHomePageState();
+  }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -31,29 +37,26 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Center(
+      body: new Container(
+        alignment: Alignment.topCenter,
         child: new Column(
-          children: <Widget>[
-            new Card(
-              child: new Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  new ListTile(
-                    leading: const Icon(Icons.event_seat),
-                    title: const Text('The seat for the narrator'),
-                  ),
-                  new Divider(),
-                  new ListTile(
-                    leading: const Icon(Icons.directions_bus),
-                    title: const Text('Bus'),
-                  )
-                ],
-              ),
-              elevation: 3.0,
-            )
-          ],
-        ),
+            children: widget.planMembers),
       ),
+      floatingActionButton: new FloatingActionButton(
+        child: new Icon(Icons.add),
+        onPressed: () {
+          JourneyElement element = new JourneyElement(
+            icon: const Icon(Icons.directions_bus),
+            name: "Bus do kato",
+            comment: "Inter",
+            time: 75);
+          JourneyPlan plan = new JourneyPlan(elements: [element]);
+          setState(() {
+            widget.planMembers.add(plan.buildCard());
+          });
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
