@@ -46,6 +46,55 @@ class JourneyElementTile extends ListTile {
             trailing: new Text(element.time.toString()));
 }
 
+class JourneyElementInput extends Form {
+  final JourneyElement element;
+  final _JourneyPlanCard plan;
+  static GlobalKey<FormState> formKey = new GlobalKey<FormState>();
+  JourneyElementInput({this.element, this.plan})
+      : super(
+            key:formKey,
+            child: new Column(children: <Widget>[
+              new TextFormField(
+                  decoration:
+                      new InputDecoration(hintText: 'Tram', labelText: 'Name'),
+                  onSaved: (String value){
+                    element.name = value;
+                  }),
+              new TextFormField(
+                  decoration: new InputDecoration(
+                      hintText: 'T27', labelText: 'Description'),
+                  onSaved: (String value){
+                    element.comment = value;
+                  }),
+              new TextFormField(
+                  keyboardType: TextInputType.numberWithOptions(
+                      signed: true, decimal: false),
+                  decoration: new InputDecoration(
+                      hintText: '15', labelText: 'Time (minutes)'),
+                  onSaved: (String value){
+                    element.time = int.parse(value);
+                  }),
+              new ButtonTheme.bar(
+                  child: new ButtonBar(children: [
+                RaisedButton(
+                  child: const Text(
+                    "OK",
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                      formKey.currentState.save();
+                      plan.setState((){
+                        element.icon = new Icon(Icons.directions_bus);
+                        plan.tile = null;
+                        plan.widget.plan.add(element);
+                      });
+                  },
+                  color: Colors.blue,
+                )
+              ]))
+            ]));
+}
+
 class JourneyPlanCard extends StatefulWidget {
   final JourneyPlan plan;
   JourneyPlanCard({Key key, this.plan}) : super(key: key);
@@ -55,6 +104,10 @@ class JourneyPlanCard extends StatefulWidget {
 }
 
 class _JourneyPlanCard extends State<JourneyPlanCard> {
+  JourneyElementInput tile;
+  JourneyElement newTile = new JourneyElement();
+
+  @override
   Widget build(BuildContext context) {
     List<JourneyElementTile> tiles = [];
     widget.plan.journeyElements
@@ -67,19 +120,20 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
       newData.add(new Divider());
     });
 
+    if (tile != null) {
+      newData.add(tile);
+      newData.add(new Divider());
+    }
+
     newData.add(new ButtonTheme.bar(
       child: new ButtonBar(
         children: <Widget>[
-          new Text(widget.plan.duration.toString()),
+          new Text(buildString()),
           new FlatButton(
             child: const Text('Add new'),
             onPressed: () {
               setState(() {
-                widget.plan.add(
-                    new JourneyElement(icon: const Icon(Icons.directions_car),
-                    name: "test",
-                    comment: "test2",
-                    time: 4));
+                tile = new JourneyElementInput(element: newTile, plan:this);
               });
             },
           ),
@@ -88,12 +142,18 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     ));
 
     Card card = new Card(
-          child: new Column(
-            mainAxisSize: MainAxisSize.min,
-            children: newData,
-          ),
-        );
+      child: new Column(
+        mainAxisSize: MainAxisSize.min,
+        children: newData,
+      ),
+    );
 
     return card;
+  }
+
+  String buildString(){
+     int hours = (widget.plan.duration/60).round();
+     int minutes = widget.plan.duration%60;
+     return "$hours hours, $minutes minutes";
   }
 }
