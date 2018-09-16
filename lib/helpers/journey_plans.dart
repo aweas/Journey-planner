@@ -42,22 +42,49 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
   @override
   Widget build(BuildContext context) {
     List<JourneyElementTile> tiles = [];
-    widget.plan.journeyElements
-        .forEach((element) => tiles.add(element.buildTile()));
+    widget.plan.journeyElements.forEach(
+      (element) => tiles.add(element.buildTile())
+    );
 
+    List<Widget> newData = _addDividers(tiles);
+    newData = _addFormIfNeeded(newData);
+    newData = _addBottomBar(newData);
+    Card card = _packIntoCard(newData);
+
+    return card;
+  }
+
+  Card _packIntoCard(List<Widget> newData) {
+    Card card = new Card(
+      child: new Column(
+        mainAxisSize: MainAxisSize.min,
+        children: newData,
+      ),
+    );
+    return card;
+  }
+
+  List _addFormIfNeeded(List<Widget> newData) {
+    if (inputFormTile != null) {
+      newData.add(inputFormTile);
+      newData.add(new Divider());
+    }
+    return newData;
+  }
+
+  List<Widget> _addDividers(List<JourneyElementTile> tiles) {
     List<Widget> temp = new List.from(tiles);
     List<Widget> newData = [];
     temp.forEach((item) {
       newData.add(item);
       newData.add(new Divider());
     });
+    return newData;
+  }
 
-    if (inputFormTile != null) {
-      newData.add(inputFormTile);
-      newData.add(new Divider());
-    }
-
-    newData.add(new ButtonTheme.bar(
+  List _addBottomBar(List<Widget> newData) {
+    GestureDetector detector = new GestureDetector(
+      child: new ButtonTheme.bar(
       child: new ButtonBar(
         children: <Widget>[
           new Text( craftHourString()
@@ -72,16 +99,12 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
           ),
         ],
       ),
-    ));
-
-    Card card = new Card(
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
-        children: newData,
-      ),
+    ),
+      onLongPress: () {print('dupa');},
     );
+    newData.add(detector);
 
-    return card;
+    return newData;
   }
 
   String _leadingZero(int time) {
