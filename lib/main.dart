@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:journey_list/helpers/journey_classes.dart';
+import 'package:journey_list/helpers/journey_plans.dart';
+import 'package:journey_list/helpers/journey_elements.dart';
 
 void main() => runApp(new MyApp());
 
