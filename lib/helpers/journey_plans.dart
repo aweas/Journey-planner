@@ -42,12 +42,15 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
   @override
   Widget build(BuildContext context) {
     List<JourneyElementTile> tiles = [];
-    widget.plan.journeyElements.forEach(
-      (element) => tiles.add(element.buildTile())
-    );
+    widget.plan.journeyElements
+        .forEach((element) => tiles.add(element.buildTile()));
 
+    // List<Widget> newData = _addTopBar(tiles);
     List<Widget> newData = _addDividers(tiles);
-    newData = _addFormIfNeeded(newData);
+    newData = _addTopBar(newData);
+    if (inputFormTile != null) {
+      newData = _addForm(newData);
+    }
     newData = _addBottomBar(newData);
     Card card = _packIntoCard(newData);
 
@@ -64,12 +67,46 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     return card;
   }
 
-  List _addFormIfNeeded(List<Widget> newData) {
-    if (inputFormTile != null) {
-      newData.add(inputFormTile);
-      newData.add(new Divider());
-    }
+  List _addForm(List<Widget> newData) {
+    newData.add(inputFormTile);
+    newData.add(new Divider());
     return newData;
+  }
+
+  List<Widget> _addTopBar(List<Widget> tiles) {
+    List<String> times = craftHourString();
+    var hours = new Text(
+      times[0],
+      textAlign: TextAlign.left,
+      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),      
+    );
+    var duration = new Text(
+      times[1],
+      textAlign: TextAlign.left,
+      style: TextStyle(color: Colors.white)
+    );
+
+    List<Widget> temp = [
+      new Container(
+        decoration: BoxDecoration(color: Colors.blueAccent),
+        child: new ListTile(
+          title: hours,
+          subtitle: duration,
+          trailing: new FlatButton(
+              child: Icon(Icons.edit, color: Colors.white,),
+              onPressed: () {
+                print('EDIT pressed');
+              },
+          ),
+        )
+    )
+    ];
+
+    tiles.forEach((item) {
+      temp.add(item);
+    });
+
+    return temp;
   }
 
   List<Widget> _addDividers(List<JourneyElementTile> tiles) {
@@ -83,56 +120,52 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
   }
 
   List _addBottomBar(List<Widget> newData) {
-    GestureDetector detector = new GestureDetector(
-      child: new ButtonTheme.bar(
+    var buttons = new ButtonTheme.bar(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
       child: new ButtonBar(
         children: <Widget>[
-          new Text( craftHourString()
-            ),
           new FlatButton(
             child: const Text('Add new'),
             onPressed: () {
               setState(() {
-                inputFormTile = new JourneyElementInput(saveHandler: addItemToList);
+                inputFormTile =
+                    new JourneyElementInput(saveHandler: addItemToList);
               });
             },
           ),
         ],
       ),
-    ),
-      onLongPress: () {print('dupa');},
     );
-    newData.add(detector);
+    newData.add(buttons);
 
     return newData;
   }
 
   String _leadingZero(int time) {
-    if(time>=10)
+    if (time >= 10)
       return time.toString();
-    else if(time!=0)
+    else if (time != 0)
       return "0$time";
     else
       return "00";
   }
 
-  String craftHourString() {
+  List<String> craftHourString() {
     int hourNow = DateTime.now().hour;
     int minuteNow = DateTime.now().minute;
-    int minutesTillNow = hourNow*60+minuteNow;
+    int minutesTillNow = hourNow * 60 + minuteNow;
 
     int minutesTillDestination = minutesTillNow + widget.plan.duration;
-    int hourThen = (minutesTillDestination/60).floor();
-    int minuteThen = minutesTillDestination%60;
+    int hourThen = (minutesTillDestination / 60).floor();
+    int minuteThen = minutesTillDestination % 60;
 
-    
     String hourNowZero = _leadingZero(hourNow);
     String minuteNowZero = _leadingZero(minuteNow);
     String hourThenZero = _leadingZero(hourThen);
     String minuteThenZero = _leadingZero(minuteThen);
     String elapsed = buildString(widget.plan.duration);
 
-    String res = "$hourNowZero:$minuteNowZero - $hourThenZero:$minuteThenZero ($elapsed)";
+    List<String> res = ["$hourNowZero:$minuteNowZero - $hourThenZero:$minuteThenZero", "$elapsed"];
 
     return res;
   }

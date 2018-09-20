@@ -30,6 +30,7 @@ class JourneyElement {
 class JourneyElementTile extends ListTile {
   JourneyElementTile({Key key, JourneyElement element})
       : super(
+            dense: true,
             key: key,
             leading: element.icon,
             title: new Text(element.name),
@@ -58,7 +59,8 @@ class _JourneyElementInput extends State<JourneyElementInput> {
 
   @override
   Widget build(BuildContext context) {
-    Column result = new Column(children: <Widget>[
+    Column result = new Column(
+      children: <Widget>[
       new TextFormField(
           decoration: new InputDecoration(hintText: 'Tram', labelText: 'Name'),
           controller: nameController),
@@ -81,11 +83,10 @@ class _JourneyElementInput extends State<JourneyElementInput> {
           ),
           onPressed: () {
             JourneyElement input = new JourneyElement(
-              icon: new Icon(Icons.directions_bus),
-              name: nameController.text,
-              comment: descController.text,
-              time: int.parse(timeController.text)
-              );
+                icon: new Icon(Icons.directions_bus),
+                name: nameController.text,
+                comment: descController.text,
+                time: int.parse(timeController.text));
 
             this.saveHandler(input);
           },
@@ -94,6 +95,6 @@ class _JourneyElementInput extends State<JourneyElementInput> {
       ]))
     ]);
 
-    return result;
+    return new Container(child: result, padding: EdgeInsets.symmetric(horizontal: 8.0));
   }
 }
