@@ -38,63 +38,62 @@ class JourneyElementTile extends ListTile {
             trailing: new Text(buildString(element.time)));
 }
 
-class JourneyElementInput extends StatefulWidget {
-  final Function saveHandler;
-
-  JourneyElementInput({Key key, this.saveHandler}) : super(key: key);
-
-  @override
-  _JourneyElementInput createState() => _JourneyElementInput(saveHandler);
-}
-
-class _JourneyElementInput extends State<JourneyElementInput> {
-  final GlobalKey<FormState> formKey = new GlobalKey<FormState>();
-  final Function saveHandler;
-
+class JourneyElementBasicForm {
   final TextEditingController nameController = new TextEditingController();
   final TextEditingController descController = new TextEditingController();
   final TextEditingController timeController = new TextEditingController();
+  final Function saveHandler;
 
-  _JourneyElementInput(this.saveHandler) : super();
+  JourneyElementBasicForm({this.saveHandler});
 
-  @override
-  Widget build(BuildContext context) {
-    Column result = new Column(
-      children: <Widget>[
-      new TextFormField(
-          decoration: new InputDecoration(hintText: 'Tram', labelText: 'Name'),
-          controller: nameController),
-      new TextFormField(
-          decoration:
-              new InputDecoration(hintText: 'T27', labelText: 'Description'),
-          controller: descController),
-      new TextFormField(
-          keyboardType:
-              TextInputType.numberWithOptions(signed: true, decimal: false),
-          decoration:
-              new InputDecoration(hintText: '15', labelText: 'Time (minutes)'),
-          controller: timeController),
-      new ButtonTheme.bar(
-          child: new ButtonBar(children: [
-        RaisedButton(
-          child: const Text(
-            "OK",
-            style: const TextStyle(color: Colors.white),
-          ),
-          onPressed: () {
-            JourneyElement input = new JourneyElement(
-                icon: new Icon(Icons.directions_bus),
-                name: nameController.text,
-                comment: descController.text,
-                time: int.parse(timeController.text));
+  List<Widget> getContent() {
+      List<Widget> result = [
+        new TextFormField(
+            decoration: new InputDecoration(hintText: 'Tram', labelText: 'Name'),
+            controller: nameController),
+        new TextFormField(
+            decoration:
+                new InputDecoration(hintText: 'T27', labelText: 'Description'),
+            controller: descController),
+        new TextFormField(
+            keyboardType:
+                TextInputType.numberWithOptions(signed: true, decimal: false),
+            decoration:
+                new InputDecoration(hintText: '15', labelText: 'Time (minutes)'),
+            controller: timeController),
+        new ButtonTheme.bar(
+            child: new ButtonBar(children: [
+          RaisedButton(
+            child: const Text(
+              "OK",
+              style: const TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              JourneyElement input = new JourneyElement(
+                  icon: new Icon(Icons.directions_bus),
+                  name: nameController.text,
+                  comment: descController.text,
+                  time: int.parse(timeController.text));
 
-            this.saveHandler(input);
-          },
-          color: Colors.blue,
-        )
-      ]))
-    ]);
+              this.saveHandler(input);
+            },
+            color: Colors.blue,
+          )
+        ]))
+      ];
 
-    return new Container(child: result, padding: EdgeInsets.symmetric(horizontal: 8.0));
-  }
+      return result;
+    }
+
+    Widget buildColumn() {
+      Widget result;
+        result = Container(
+            child: new Column(children: this.getContent()), padding: EdgeInsets.symmetric(horizontal: 8.0));
+
+      return result;
+    }
+
+    Widget buildListView() {
+      return new ListView(children: this.getContent());
+    }
 }

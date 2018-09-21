@@ -29,7 +29,7 @@ class JourneyPlanCard extends StatefulWidget {
 }
 
 class _JourneyPlanCard extends State<JourneyPlanCard> {
-  JourneyElementInput inputFormTile;
+  JourneyElementBasicForm inputFormTile;
   JourneyElement newTile = new JourneyElement();
 
   void addItemToList(JourneyElement tile) {
@@ -68,7 +68,7 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
   }
 
   List _addForm(List<Widget> newData) {
-    newData.add(inputFormTile);
+    newData.add(inputFormTile.buildColumn());
     newData.add(new Divider());
     return newData;
   }
@@ -129,7 +129,7 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
             onPressed: () {
               setState(() {
                 inputFormTile =
-                    new JourneyElementInput(saveHandler: addItemToList);
+                    new JourneyElementBasicForm(saveHandler: addItemToList);
               });
             },
           ),

@@ -61,9 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
           });
           AlertDialog form = new AlertDialog(
             title: new Text("test"),
-            content: new ListView(children: [new JourneyElementInput()]),
+            content: new JourneyElementBasicForm().buildColumn()
           );
-          //FIXME:
+
           showDialog(context: context, builder: (BuildContext b) => form);
         },
       ),
