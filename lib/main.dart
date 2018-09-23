@@ -4,7 +4,7 @@ import 'package:journey_list/helpers/journey_elements.dart';
 import 'package:flutter/rendering.dart';
 
 void main() {
-  debugPaintSizeEnabled = true;
+  debugPaintSizeEnabled = false;
   runApp(new MyApp());
 }
 
@@ -45,7 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: new Container(
         alignment: Alignment.topCenter,
-        child: new ListView(children: [new Column(children: widget.planMembers)]),
+        child:
+            new ListView(children: [new Column(children: widget.planMembers)]),
       ),
       floatingActionButton: new FloatingActionButton(
         child: new Icon(Icons.add),
@@ -60,9 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
             widget.planMembers.add(plan.buildCard());
           });
           AlertDialog form = new AlertDialog(
-            title: new Text("test"),
-            content: new JourneyElementBasicForm().buildColumn()
-          );
+              title: new Text("test"),
+              content: new JourneyElementBasicForm().buildColumn());
 
           showDialog(context: context, builder: (BuildContext b) => form);
         },

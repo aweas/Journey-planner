@@ -88,12 +88,13 @@ class JourneyElementBasicForm {
     Widget buildColumn() {
       Widget result;
         result = Container(
-            child: new Column(children: this.getContent()), padding: EdgeInsets.symmetric(horizontal: 8.0));
+            child: new Column(children: this.getContent()), padding: EdgeInsets.symmetric(horizontal: 8.0),
+            height: 241.0);
 
       return result;
     }
 
-    Widget buildListView() {
+    Widget buildContainer() {
       return new ListView(children: this.getContent());
     }
 }

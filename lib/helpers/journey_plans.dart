@@ -29,12 +29,17 @@ class JourneyPlanCard extends StatefulWidget {
 }
 
 class _JourneyPlanCard extends State<JourneyPlanCard> {
+  bool showForm = false;
   JourneyElementBasicForm inputFormTile;
   JourneyElement newTile = new JourneyElement();
 
+  _JourneyPlanCard() {
+    inputFormTile = new JourneyElementBasicForm(saveHandler: addItemToList);
+  }
+
   void addItemToList(JourneyElement tile) {
     setState(() {
-      inputFormTile = null;
+      showForm = false;
       widget.plan.add(tile);
     });
   }
@@ -45,13 +50,13 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     widget.plan.journeyElements
         .forEach((element) => tiles.add(element.buildTile()));
 
-    // List<Widget> newData = _addTopBar(tiles);
     List<Widget> newData = _addDividers(tiles);
     newData = _addTopBar(newData);
-    if (inputFormTile != null) {
+    if (showForm)
       newData = _addForm(newData);
-    }
-    newData = _addBottomBar(newData);
+    else
+      newData = _addBottomBar(newData);
+
     Card card = _packIntoCard(newData);
 
     return card;
@@ -68,8 +73,8 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
   }
 
   List _addForm(List<Widget> newData) {
-    newData.add(inputFormTile.buildColumn());
     newData.add(new Divider());
+    newData.add(inputFormTile.buildColumn());
     return newData;
   }
 
@@ -78,28 +83,31 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     var hours = new Text(
       times[0],
       textAlign: TextAlign.left,
-      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),      
+      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
     );
-    var duration = new Text(
-      times[1],
-      textAlign: TextAlign.left,
-      style: TextStyle(color: Colors.white)
-    );
+    var duration = new Text(times[1],
+        textAlign: TextAlign.left, style: TextStyle(color: Colors.white));
 
     List<Widget> temp = [
       new Container(
-        decoration: BoxDecoration(color: Colors.blueAccent),
-        child: new ListTile(
-          title: hours,
-          subtitle: duration,
-          trailing: new FlatButton(
-              child: Icon(Icons.edit, color: Colors.white,),
+          decoration: BoxDecoration(
+              color: Colors.blueAccent,
+              borderRadius: new BorderRadius.only(
+                  topLeft: Radius.circular(4.0),
+                  topRight: Radius.circular(4.0))),
+          child: new ListTile(
+            title: hours,
+            subtitle: duration,
+            trailing: new FlatButton(
+              child: Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
               onPressed: () {
                 print('EDIT pressed');
               },
-          ),
-        )
-    )
+            ),
+          ))
     ];
 
     tiles.forEach((item) {
@@ -114,7 +122,7 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     List<Widget> newData = [];
     temp.forEach((item) {
       newData.add(item);
-      newData.add(new Divider());
+      if (item != temp.last) newData.add(new Divider());
     });
     return newData;
   }
@@ -128,8 +136,7 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
             child: const Text('Add new'),
             onPressed: () {
               setState(() {
-                inputFormTile =
-                    new JourneyElementBasicForm(saveHandler: addItemToList);
+                showForm = true;
               });
             },
           ),
@@ -165,7 +172,10 @@ class _JourneyPlanCard extends State<JourneyPlanCard> {
     String minuteThenZero = _leadingZero(minuteThen);
     String elapsed = buildString(widget.plan.duration);
 
-    List<String> res = ["$hourNowZero:$minuteNowZero - $hourThenZero:$minuteThenZero", "$elapsed"];
+    List<String> res = [
+      "$hourNowZero:$minuteNowZero - $hourThenZero:$minuteThenZero",
+      "$elapsed"
+    ];
 
     return res;
   }
